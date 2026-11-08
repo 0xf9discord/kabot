@@ -1,0 +1,69 @@
+name: Publish to PyPI
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pypi-publish
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install build and test dependencies
+        run: python -m pip install -e ".[dev,loco]"
+      - name: Check release tag and determine output folder
+        id: package
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          python - <<'PY'
+          import os
+          import tomllib
+          from pathlib import Path
+          version = tomllib.loads(Path("pyproject.toml").read_text())["project"]["version"]
+          tag = os.environ.get("RELEASE_TAG", "")
+          if tag and tag != f"v{version}":
+              raise SystemExit(f"Release tag must be v{version}, got {tag}")
+          with open(os.environ["GITHUB_OUTPUT"], "a") as output:
+              output.write(f"directory=dist/pypi/{version}\n")
+          PY
+      - name: Lint and test
+        run: |
+          python -m ruff check src tests examples tools/build_release.py
+          python -m pytest -q
+      - name: Build and validate distributions
+        run: python tools/build_release.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pypi-distributions
+          path: |
+            ${{ steps.package.outputs.directory }}/*.whl
+            ${{ steps.package.outputs.directory }}/*.tar.gz
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/kabot-python/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: pypi-distributions
+          path: dist/
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
