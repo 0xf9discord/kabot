@@ -9,16 +9,16 @@ Python 3.11 이상에서 채널 챗봇 서버, 공식 메시지 REST API,
 ## 설치
 
 ```console
-python -m pip install kabot-python
+python -m pip install pykabot
 ```
 
 개인 계정·오픈채팅 기능을 사용하려면:
 
 ```console
-python -m pip install "kabot-python[loco]"
+python -m pip install "pykabot[loco]"
 ```
 
-배포 이름은 `kabot-python`, Python import 이름과 실행 명령은 `kabot`입니다.
+배포 이름은 `pykabot`, Python import 이름과 실행 명령은 `kabot`입니다.
 Windows, Linux, macOS에서 사용할 수 있는 순수 Python 패키지입니다.
 
 ## 네트워크 없이 봇 만들기
