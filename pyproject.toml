@@ -1,0 +1,60 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "kabot-python"
+version = "0.4.0"
+description = "Kakao channel bots, standalone Android-profile sessions and official message APIs"
+readme = {file = "PYPI_README.md", content-type = "text/markdown"}
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE", "docs/THIRD_PARTY_NOTICES.md"]
+authors = [{name = "Kabot contributors"}]
+keywords = ["kakao", "kakaotalk", "chatbot", "asyncio", "loco"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Communications :: Chat",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = ["fastapi>=0.115,<1", "httpx>=0.27,<1", "uvicorn>=0.30,<1", "pydantic>=2.8,<3"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10", "build>=1.2,<2", "ruff>=0.9,<1", "twine>=6.1,<7"]
+loco = ["pymongo>=4.10,<5", "cryptography>=44,<50"]
+
+[project.scripts]
+kabot = "kabot.cli:main"
+
+[tool.hatch.build.targets.wheel]
+core-metadata-version = "2.4"
+packages = ["src/kabot"]
+
+[tool.hatch.build.targets.sdist]
+core-metadata-version = "2.4"
+include = [
+    "/src/kabot", "/tests", "/examples", "/README.md", "/PYPI_README.md",
+    "/LICENSE", "/pyproject.toml", "/tools/build_release.py",
+    "/docs/LOGIN.md", "/docs/LOCO.md", "/docs/REST.md", "/docs/OPEN_PROFILE.md",
+    "/docs/DEPLOYMENT.md", "/docs/PUBLISHING.md", "/docs/THIRD_PARTY_NOTICES.md",
+    "/docs/licenses",
+]
+exclude = ["**/__pycache__", "**/*.pyc", "**/*.kabot", "**/*.sqlite3*", "**/.env*"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"docs/THIRD_PARTY_NOTICES.md" = "kabot/THIRD_PARTY_NOTICES.md"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]
