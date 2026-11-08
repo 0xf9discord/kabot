@@ -15,7 +15,7 @@ from .rest import KakaoAPIError, KakaoClient, OAuthTokens, authorization_url, va
 from .server import create_app
 from .state import SQLiteStore
 
-__version__ = "0.4.0"
+__version__ = "0.4.1"
 __all__ = [
     "Bot",
     "Context",
