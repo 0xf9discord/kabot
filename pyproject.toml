@@ -3,7 +3,7 @@ requires = ["hatchling>=1.27,<2"]
 build-backend = "hatchling.build"
 
 [project]
-name = "kabot-python"
+name = "pykabot"
 version = "0.4.0"
 description = "Kakao channel bots, standalone Android-profile sessions and official message APIs"
 readme = {file = "PYPI_README.md", content-type = "text/markdown"}
